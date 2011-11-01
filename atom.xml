@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[BioSci 1540]]></title>
   <link href="http://synapticarbors.github.com/BioSci1540/atom.xml" rel="self"/>
   <link href="http://synapticarbors.github.com/BioSci1540/"/>
-  <updated>2011-11-01T14:23:08-04:00</updated>
+  <updated>2011-11-01T14:52:47-04:00</updated>
   <id>http://synapticarbors.github.com/BioSci1540/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[Joshua L. Adelman]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
