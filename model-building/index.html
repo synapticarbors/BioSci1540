@@ -1,0 +1,391 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>model building - BioSci 1540</title>
+  <meta name="author" content="Joshua L. Adelman">
+
+  
+  <meta name="description" content="Model Building Some initial notes Throughout the tutorial, terminal refers to the application in /Applications/Utilities.
+The Tk Console is a &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://synapticarbors.github.com/BioSci1540/model-building">
+  <link href="/BioSci1540/favicon.png" rel="icon">
+  <link href="/BioSci1540/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/BioSci1540/javascripts/modernizr-2.0.js"></script>
+  <script src="/BioSci1540/javascripts/ender.js"></script>
+  <script src="/BioSci1540/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/BioSci1540/atom.xml" rel="alternate" title="BioSci 1540" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   class="no-sidebar"  >
+  <header role="banner"><hgroup>
+  <h1><a href="/BioSci1540/">BioSci 1540</a></h1>
+  
+    <h2>Introduction to Biomolecular Simulation</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/BioSci1540/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:synapticarbors.github.com/BioSci1540" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul class="main-navigation">
+  <li><a href="/BioSci1540/">Home</a></li>
+  <li><a href="/BioSci1540/resources">Resources</a></li>
+</ul>
+
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article role="article">
+  
+  <header>
+    <h1 class="entry-title">Model Building</h1>
+    
+  </header>
+  
+  <h2>Some initial notes</h2>
+
+<ul>
+<li>Throughout the tutorial, <strong>terminal</strong> refers to the application in <code>/Applications/Utilities</code>.</li>
+<li>The <strong>Tk Console</strong> is a terminal-like window that you can access in <code>VMD</code> via the drop down menu <code>Extensions</code> in the <code>VMD Main</code> window.</li>
+<li>The VMD <code>atomselect</code> command requires that you either specify a <code>molid</code> or <code>top</code> (e.g. <code>atomselect top "SELECTION"</code> or <code>atomselect 3 "SELECTION").
+If you are using</code>top<code>as is used below, make sure that the</code>T` appears next to the correct model</li>
+</ul>
+
+
+<h2>Download files</h2>
+
+<p>Begin by downloading the archive of files from lab github repository, which can be found at:
+<a href="https://github.com/synapticarbors/BioSci1540/zipball/master">https://github.com/synapticarbors/BioSci1540/zipball/master</a></p>
+
+<p>Move the <code>.zip</code> archive from where it was downloaded (most likely the Downloads directory) to a new folder that you will use for
+the remainder of the labs. Preferably, this will be in a location that is backed-up to the class server so that you can access it
+on other machines in the lab. Once you have moved the archive, which will be named something like <code>synapticarbors-BioSci1540-XXXXX.zip</code>,
+you can extract the files by either double-clicking on it and then rename the folder <code>md_tutorial</code>, or opening a terminal window and running the following commands:</p>
+
+<figure class='code'><figcaption><span>Terminal</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> &lt;Location of .zip file&gt;
+</span><span class='line'>unzip synapticarbors-BioSci1540-XXXXX.zip
+</span><span class='line'>mv synapticarbors-BioSci1540-XXXXX md_tutorial
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Be sure to replace the <code>XXXXX</code> in <code>synapticarbors-BioSci1540-XXXXX</code> by whatever the names of the files are for your specific case.
+For the rest of the lab, the path to the <code>md_tutorial</code> directory will be written in shorthand as <code>$MDT</code>.</p>
+
+<h2>Construct initial model for gramicidin in membrane and solvent</h2>
+
+<p>If we were setting up a system entirely from scratch, we would likely begin with a set of coordinates from the <a href="http://www.pdb.org/">Protein Data Bank</a>.
+The experimental structure might be missing the coordinates for a subset of the residues, and would be lacking solvent and lipids and probably would not contain
+the positions of any hydrogens in the protein.
+Due to the time constraints of the lab, you will begin with a system in which gramicidin has already been embedded in a DMPC lipid bilayer with water
+and ions, although hydrogen atoms have not been added yet. Take a moment to look at the page for 1JNO structure of Gramicidin A on the PDB website, whose coordinates provide the initial structure of the protein.
+<a href="http://www.pdb.org/pdb/explore/explore.do?structureId=1JNO">http://www.pdb.org/pdb/explore/explore.do?structureId=1JNO</a></p>
+
+<blockquote><p>QUESTION 1: What method was used to determine the structure of 1JNO?</p></blockquote>
+
+
+<h3>Create topology file and add hydrogens</h3>
+
+<p>While the <code>.pdb</code> file tells <code>NAMD</code> the initial coordinates to begin the simulation with, we also need to provide it with a topology
+file that tells it which atoms are bonded, which are connected via an angle spring, etc. The topology file carries a <code>.psf</code> extension and
+can be created using the <code>psfgen</code> tool that comes with VMD. This tool can also be used to add hydrogen atoms to the system.</p>
+
+<p>In the <code>Tk Console</code>, first change directories to <code>$MDT</code> and then load the starting coordinates:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nb">cd</span> <span class="nv">$MDT</span><span class="o">/</span>model_files
+</span><span class='line'><span class="nv">mol</span> new gramicidin_initial_struct.pdb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Take a moment to look at the structure, change the representation to highlight the protein, lipid, water, and ions.</p>
+
+<p>The first thing we have to is split the structure into segments and create a new <code>.pdb</code> file for each.
+We will use the VMD command <code>atomselect</code> to select a subset of atoms and then write that subset to a <code>.pdb</code> file</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="k">set</span> wat <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;water&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="nv">$wat</span> <span class="nv">writepdb</span> wat.pdb
+</span><span class='line'>
+</span><span class='line'><span class="k">set</span> lip <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;lipid&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="nv">$lip</span> <span class="nv">writepdb</span> lipids.pdb
+</span><span class='line'>
+</span><span class='line'><span class="k">set</span> ga1 <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;segname GA1&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="nv">$ga1</span> <span class="nv">writepdb</span>  ga1.pdb
+</span><span class='line'>
+</span><span class='line'><span class="k">set</span> ga2 <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;segname GA2&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="nv">$ga2</span> <span class="nv">writepdb</span>  ga2.pdb
+</span><span class='line'>
+</span><span class='line'><span class="k">set</span> cl <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;resname CLA&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="nv">$cl</span> <span class="nv">writepdb</span>  cl.pdb
+</span><span class='line'>
+</span><span class='line'><span class="k">set</span> pot <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;resname POT&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="nv">$pot</span> <span class="nv">writepdb</span>  pot.pdb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now load <code>psfgen</code></p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nb">package</span> require psfgen
+</span><span class='line'><span class="nv">resetpsf</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Load the topology file that shows how the atoms in different residues and groups should be built, and define
+some aliases:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">topology</span> ..<span class="o">/</span>toppar<span class="o">/</span>top_all27_prot_lipid_gram.inp
+</span><span class='line'>
+</span><span class='line'><span class="nv">pdbalias</span> residue DLE LEU
+</span><span class='line'><span class="nv">pdbalias</span> residue DVA VAL
+</span><span class='line'><span class="nv">pdbalias</span> atom ETA O OG
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Define the segments:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">segment</span> GA1 <span class="k">{</span>
+</span><span class='line'><span class="nv">first</span> NONE
+</span><span class='line'><span class="nv">last</span> NONE
+</span><span class='line'><span class="nv">pdb</span> ga1.pdb
+</span><span class='line'><span class="k">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">segment</span> GA2 <span class="k">{</span>
+</span><span class='line'><span class="nv">first</span> NONE
+</span><span class='line'><span class="nv">last</span> NONE
+</span><span class='line'><span class="nv">pdb</span> ga2.pdb
+</span><span class='line'><span class="k">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">segment</span> TIP3 <span class="k">{</span>
+</span><span class='line'><span class="nv">first</span> NONE
+</span><span class='line'><span class="nv">last</span> NONE
+</span><span class='line'><span class="nv">pdb</span> wat.pdb
+</span><span class='line'><span class="k">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">segment</span> MEMB <span class="k">{</span>
+</span><span class='line'><span class="nv">first</span> NONE
+</span><span class='line'><span class="nv">last</span> NONE
+</span><span class='line'><span class="nv">pdb</span> lipids.pdb
+</span><span class='line'><span class="k">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">segment</span> CLA <span class="k">{</span>
+</span><span class='line'><span class="nv">first</span> NONE
+</span><span class='line'><span class="nv">last</span> NONE
+</span><span class='line'><span class="nv">pdb</span> cl.pdb
+</span><span class='line'><span class="k">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">segment</span> POT <span class="k">{</span>
+</span><span class='line'><span class="nv">first</span> NONE
+</span><span class='line'><span class="nv">last</span> NONE
+</span><span class='line'><span class="nv">pdb</span> pot.pdb
+</span><span class='line'><span class="k">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Load in the coordinates from the <code>.pdb</code> files we previously created:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">coordpdb</span> ga1.pdb GA1
+</span><span class='line'><span class="nv">coordpdb</span> ga2.pdb GA2
+</span><span class='line'><span class="nv">coordpdb</span> wat.pdb TIP3
+</span><span class='line'><span class="nv">coordpdb</span> lipids.pdb MEMB
+</span><span class='line'><span class="nv">coordpdb</span> cl.pdb CLA
+</span><span class='line'><span class="nv">coordpdb</span> pot.pdb POT
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Guess the coordinates of any atoms specified by the topology file, but missing in the coordinate files (e.g. hydrogen atoms):</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">guesscoord</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and finally write out the new coordinates and topology file:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">writepsf</span> gramicidin_final_model.psf
+</span><span class='line'><span class="nv">writepdb</span> gramicidin_final_model.pdb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now load the new model into VMD to visualize it and make sure everything looks good:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">mol</span> new gramicidin_final_model.psf
+</span><span class='line'><span class="nv">mol</span> addfile gramicidin_final_model.pdb
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<blockquote><p>QUESTION 2: Did psfgen do a good job of selecting the positions of the hydrogen atoms for the water? Why or why not? (HINT: It may be easier to visualize the water if it is shown in the VDW representation).</p></blockquote>
+
+
+<h3>Place a potassium atom in the channel</h3>
+
+<p>In order to investigate the behavior of a potassium ion (K+) in the channel, each group in the lab will place an ion at a different position in the channel.
+We will do so by swapping one of the K+ atoms in the bulk solvent for a water molecule in the channel.</p>
+
+<p>First determine the extent of the protein by selecting the backbone atoms and then measure their minimum and maximum values along the z-direction:</p>
+
+<p>&#8220;` tcl Tk Console</p>
+
+<p>&#8220;`</p>
+
+  
+    <footer>
+      
+      
+    </footer>
+  
+</article>
+
+</div>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2011 - Joshua L. Adelman -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
