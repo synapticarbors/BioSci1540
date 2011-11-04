@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>minimization and equilibration - BioSci 1540</title>
+  <meta name="author" content="Joshua L. Adelman">
+
+  
+  <meta name="description" content="Minimization and Equilibration Minimization The first step in simulating our system containing gramicidin A is to perform a minimization. This will &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://synapticarbors.github.com/BioSci1540/minimization-and-equilibration">
+  <link href="/BioSci1540/favicon.png" rel="icon">
+  <link href="/BioSci1540/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/BioSci1540/javascripts/modernizr-2.0.js"></script>
+  <script src="/BioSci1540/javascripts/ender.js"></script>
+  <script src="/BioSci1540/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/BioSci1540/atom.xml" rel="alternate" title="BioSci 1540" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   class="no-sidebar"  >
+  <header role="banner"><hgroup>
+  <h1><a href="/BioSci1540/">BioSci 1540</a></h1>
+  
+    <h2>Introduction to Biomolecular Simulation</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/BioSci1540/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:synapticarbors.github.com/BioSci1540" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul class="main-navigation">
+  <li><a href="/BioSci1540/">Home</a></li>
+  <li><a href="/BioSci1540/resources">Resources</a></li>
+</ul>
+
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article role="article">
+  
+  <header>
+    <h1 class="entry-title">Minimization and Equilibration</h1>
+    
+  </header>
+  
+  <h2>Minimization</h2>
+
+<p>The first step in simulating our system containing gramicidin A is to perform a minimization. This will remove any interactions
+(such as steric clashes between atoms) in the system that might cause the numerical integrators to become unstable when we run dynamics.</p>
+
+<p>Open up the NAMD configuration <code>$MDT/minimization/MIN00.namd</code> using <code>Text Wrangler</code> or your favorite text editor (but not Word or TextEdit).
+This file specifies a number of parameters that NAMD will use to perform the minimization of our model. The only modifications that you will
+need to make is to specify the <code>coordinates</code> and <code>structure</code> parameters (replace the <code>XXXX</code> with the proper path to the file). You will
+find information about these parameters in the <a href="http://www.ks.uiuc.edu/Research/namd/2.8/ug/node13.html#SECTION00062100000000000000">NAMD manual</a>.
+After you have made the necessary modifications, save <code>MIN00.namd</code>, open a terminal window and use <code>cd</code> to change the current directory to
+<code>$MDT/minimization</code>.</p>
+
+<p>Run the minimization via:</p>
+
+<figure class='code'><figcaption><span>Terminal</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>namd2 +p2 MIN00.namd &gt; min00.log &amp;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>This may take several minutes. After the minimization has completed, examine the <code>.log</code> file to ensure that the gradient of the energy
+is less than 5.0 by the end of the minimization. You can select the pertinent lines using the unix command <code>grep</code>:</p>
+
+<figure class='code'><figcaption><span>Terminal</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>grep GRADIENT min00.log
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Next, plot the change in energy of the system as a function of minimization step using VMD. In the <code>VMD Main</code> window, open <code>NAMD Plot</code> which can be
+found under <code>Extensions &gt; Analysis</code>. Select the <code>min.log</code> file in the <code>file</code> pull down menu. We want to consider both the total energy, but also the
+contributions from the bond, angle, dihedral, electrostatic and vdw terms. Check each of these boxes and then plot the data using the <code>File</code> pull down
+menu.</p>
+
+<blockquote><p>QUESTION 1: Does a single energy term dominate the total change in energy of the system? If so, which one?</p></blockquote>
+
+
+<p>Now load the <code>min00.dcd</code> file into VMD. First load in your initial model <code>.pdb</code> file and then use the <code>Load Data Into Molecule ...</code> option in
+<code>VMD Main &gt; File</code> to load the <code>.dcd</code> file. You should see small but noticeable changes in your system.</p>
+
+<h2>Heating</h2>
+
+<p>The next step is to thermalize the system (i.e heat it to room temperature) and then release the restraints we have placed on the protein and
+the ion in the channel. In the terminal, move to the <code>$MDT/heating</code> directory. We will do this in three steps.<br/>
+These should run sequentially, waiting for one to finish before starting the next run.</p>
+
+<figure class='code'><figcaption><span>Terminal</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>namd2 +p2 HEAT00.namd &gt; heat00.log &amp;
+</span><span class='line'>namd2 +p2 HEAT01.namd &gt; heat01.log &amp;
+</span><span class='line'>namd2 +p2 HEAT02.namd &gt; heat02.log &amp;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+Each simulation should take approximately:</p>
+
+<ul>
+<li>HEAT00 &#8211; 3 minutes</li>
+<li>HEAT01 &#8211; 25 minutes</li>
+<li>HEAT02 &#8211; 6 minutes</li>
+</ul>
+
+
+<p>After each run has completed, load the <code>.dcd</code> file into VMD to visualize the system. Also use the log file and the <code>NAMD Plot</code> plugin that
+you used previously to look at the temperature and volume of the system. Save a copy of each plot
+using the <code>Export to postscript</code> option to submit along with the answers to the questions.
+Also use the <code>RMSD Trajectory Tool</code> under the <code>VMD Main &gt; Extensions &gt; Analysis</code> menu to look at the
+<a href="http://en.wikipedia.org/wiki/Root_mean_square_deviation_(bioinformatics)">root mean square deviation</a>.
+of the protein after doing an alignment to your model reference structure.</p>
+
+<blockquote><p>QUESTION 2: Qualitatively describe what is happening to the temperature,volume and rmsd during each simulation</p></blockquote>
+
+
+<h2>Production</h2>
+
+<p>The system should now be at the correct temperature and unrestrained and ready for us to do a long simulation.
+We will run these simulations on a small cluster in the department rather on the workstations in the Hughes Lab, and analyze the
+resulting trajectories in the final section of the lab on biomolecular simulation.</p>
+
+  
+</article>
+
+</div>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2011 - Joshua L. Adelman -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

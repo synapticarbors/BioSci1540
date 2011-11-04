@@ -75,8 +75,10 @@ The Tk Console is a &hellip;">
 <ul>
 <li>Throughout the tutorial, <strong>terminal</strong> refers to the application in <code>/Applications/Utilities</code>.</li>
 <li>The <strong>Tk Console</strong> is a terminal-like window that you can access in <code>VMD</code> via the drop down menu <code>Extensions</code> in the <code>VMD Main</code> window.</li>
-<li>The VMD <code>atomselect</code> command requires that you either specify a <code>molid</code> or <code>top</code> (e.g. <code>atomselect top "SELECTION"</code> or <code>atomselect 3 "SELECTION").
-If you are using</code>top<code>as is used below, make sure that the</code>T` appears next to the correct model</li>
+<li>The VMD <code>atomselect</code> command requires that you either specify a <code>molid</code> or <code>top</code> (e.g. <code>atomselect top "SELECTION"</code> or <code>atomselect 3 "SELECTION"</code>).
+If you are using <code>top</code> as is used below, make sure that the <code>T</code> appears next to the correct model.</li>
+<li>Anytime you use the <code>atomselect</code> command in the Tk Console, it is recommended to create a new representation using the <code>Create Rep</code> button in Representations
+window of VMD, and enter the SELECTION in the Selected Atoms field to visualize the subset of atoms to make sure it is selecting what you think it should be.</li>
 </ul>
 
 
@@ -299,8 +301,8 @@ some aliases:</p>
 
 <figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">writepsf</span> gramicidin_final_model.psf
-</span><span class='line'><span class="nv">writepdb</span> gramicidin_final_model.pdb
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">writepsf</span> gramicidin_model.psf
+</span><span class='line'><span class="nv">writepdb</span> gramicidin_model.pdb
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -308,8 +310,8 @@ some aliases:</p>
 
 <figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">mol</span> new gramicidin_final_model.psf
-</span><span class='line'><span class="nv">mol</span> addfile gramicidin_final_model.pdb
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">mol</span> new gramicidin_model.psf
+</span><span class='line'><span class="nv">mol</span> addfile gramicidin_model.pdb
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -325,9 +327,110 @@ We will do so by swapping one of the K+ atoms in the bulk solvent for a water mo
 
 <p>First determine the extent of the protein by selecting the backbone atoms and then measure their minimum and maximum values along the z-direction:</p>
 
-<p>&#8220;` tcl Tk Console</p>
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="k">set</span> prot <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;protein and backbone&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="nv">measure</span> minmax <span class="nv">$prot</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>&#8220;`</p>
+
+<p>This will produce the minimimum and maximum values of the positions in x,y,z as two lists <code>{xmin,ymin,zmin}</code> and <code>{xmax,ymax,zmax}</code>.</p>
+
+<p>Use the <code>zmin</code> and <code>zmax</code> values to create a new representation in the <code>Graphical Representations</code> window showing just the water molecules
+in the channel. First try the selection <code>water and z &gt; zmin and z &lt; zmax</code>, where <code>zmin</code> and <code>zmax</code> have been replaced with the actual
+values from the last step. You should see that there are several water molecules that lay outside of the channel. To focus on the water in the
+channel, take a look at the <a href="http://www.ks.uiuc.edu/Research/vmd/current/ug/node95.html#5284">description</a> of the <code>same</code> and <code>within</code> keywords
+in the VMD manual, and modify selection to show only the water molecules close to the long axis of the channel.</p>
+
+<blockquote><p>QUESTION 3: Record your final atomselection.</p></blockquote>
+
+
+<p>There should be nine water molecules that are in the channel in a single file line along the z-axis. Each group will be assigned a different water molecule
+to swap with a K+ ion, so that we can analyze the stability of K+ in the channel at different positions. After you have been assigned a water molecule,
+determine its <code>resid</code> by pressing <code>1</code> and then use the mouse to select and label the oxygen atom of the water molecule. Open up the <code>Graphics &gt; Labels</code> window
+to see more information about the selected atom and use the <code>ResID</code> to then make selection in the Tk Console:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="k">set</span> watsel <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;resame TIP3 and resid XXX&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="k">set</span> potsel <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;resname POT and resid 1&quot;</span><span class="k">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now determine the center-of-mass position of the water and K+ ion:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="k">set</span> watpos <span class="k">[</span><span class="nv">measure</span> center <span class="nv">$watsel</span><span class="k">]</span>
+</span><span class='line'><span class="k">set</span> potpos <span class="k">[</span><span class="nv">measure</span> center <span class="nv">$potsel</span><span class="k">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then determine the vector between them:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="k">set</span> r <span class="k">[</span><span class="nv">vecsub</span> <span class="nv">$watpos</span> <span class="nv">$potpos</span><span class="k">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and swap their positions:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">$potsel</span> <span class="nv">moveby</span> <span class="nv">$r</span>
+</span><span class='line'><span class="nv">$watsel</span> <span class="nv">moveby</span> <span class="k">[</span><span class="nv">vecscale</span> <span class="nv">$r</span> <span class="o">-</span><span class="mi">1</span><span class="k">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If everything looks correct, then save a new pdb file that contains the coordinates with the K+ in the channel:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="k">set</span> all <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;all&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="nv">$all</span> <span class="nv">writepdb</span> gramicidin_final_model.pdb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Since the topology has not changed, we can continue to use the <code>.psf</code> file we created in the previous step.</p>
+
+<h3>Create restraint file</h3>
+
+<p>The final step is to create a file that restrains the positions of the protein and K+ ion in the channel during the minization and heating of
+the system, so that these steps do not artifically perturb them. This file is just a <code>.pdb</code> file in which we use the column that specifies the
+beta factor to indicate which atoms are restrained. First delete all of the molecules that have been previously loaded into VMD and then:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">mol</span> new gramicidin_final_model.pdb
+</span><span class='line'>
+</span><span class='line'><span class="k">set</span> all <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;all&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="nv">$all</span> <span class="k">set</span> beta <span class="mf">0.0</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">set</span> prot <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;not {water or ion or lipid} and noh&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="nv">$prot</span> <span class="k">set</span> beta <span class="mf">1.0</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">set</span> pot <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;resname POT and resid 1&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="nv">$pot</span> <span class="k">set</span> beta <span class="mf">1.0</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now take a look at your system using a representation where the <code>Coloring Method</code> has been set to <code>Beta</code>. You should see the atoms that you have
+selected to restrain in one color and all of the other atoms in another. If this looks correct save the file:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">$all</span> <span class="nv">writepdb</span> gramicidin_res.pdb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We are now ready to move onto <a href="/BioSci1540/minimization-and-equilibration">Minimization and Equilibration</a>.</p>
 
   
     <footer>
