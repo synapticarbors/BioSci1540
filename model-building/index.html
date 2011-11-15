@@ -393,7 +393,7 @@ to see more information about the selected atom and use the <code>ResID</code> t
 
 <p>Since the topology has not changed, we can continue to use the <code>.psf</code> file we created in the previous step.</p>
 
-<h3>Create restraint file</h3>
+<h3>Create restraint files</h3>
 
 <p>The final step is to create a file that restrains the positions of the protein and K+ ion in the channel during the minization and heating of
 the system, so that these steps do not artifically perturb them. This file is just a <code>.pdb</code> file in which we use the column that specifies the
@@ -427,6 +427,31 @@ selected to restrain in one color and all of the other atoms in another. If this
 
 <figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">$all</span> <span class="nv">writepdb</span> gramicidin_res.pdb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We will also create a restraint file to use during our production run, which will apply a weak restraint to the CA atoms
+in gramicidin&#8217;s backbone. This is meant to keep the protein from diffusing in the plane of the membrane. This will
+make our analysis easier since we will not have to correct for the periodic boundary condition if one of the monomers cross
+the boundary when the other has not. The weak restraint should have minimimal effect on our results, although this
+strategy is not commonly used in research (we are only doing this for the purposes of this lab).</p>
+
+<p>Again using the structure from <code>gramicidin_final_model.pdb</code>, we will reset the <code>beta</code> values and select a different set of atoms:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="k">set</span> all <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;all&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="nv">$all</span> <span class="k">set</span> beta <span class="mf">0.0</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">set</span> ca <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;protein and name CA&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="nv">$ca</span> <span class="k">set</span> beta <span class="mf">1.0</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$all</span> <span class="nv">writepdb</span> gramicidin_res_prod.pdb
 </span></code></pre></td></tr></table></div></figure>
 
 

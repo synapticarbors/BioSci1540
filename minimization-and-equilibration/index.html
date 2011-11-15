@@ -118,8 +118,12 @@ These should run sequentially, waiting for one to finish before starting the nex
 <figure class='code'><figcaption><span>Terminal</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>namd2 +p2 HEAT00.namd &gt; heat00.log &amp;
+</span><span class='line'><span class="c"># wait for the simulation to finish before starting the next one</span>
 </span><span class='line'>namd2 +p2 HEAT01.namd &gt; heat01.log &amp;
+</span><span class='line'><span class="c"># wait for the simulation to finish before starting the next one</span>
 </span><span class='line'>namd2 +p2 HEAT02.namd &gt; heat02.log &amp;
 </span></code></pre></td></tr></table></div></figure>
 
@@ -134,7 +138,10 @@ Each simulation should take approximately:</p>
 </ul>
 
 
-<p>After each run has completed, load the <code>.dcd</code> file into VMD to visualize the system. Also use the log file and the <code>NAMD Plot</code> plugin that
+<p>After each run has completed, load the <code>.dcd</code> file into VMD to visualize the system.
+If you are going to look at the water in the channel using an atomselection that specifies the <code>z</code> position,
+be sure to select <code>Update Selection Every Frame</code> in the <code>Trajectory</code> tab of the <code>Graphical Representations</code> window.
+Also use the log file and the <code>NAMD Plot</code> plugin that
 you used previously to look at the temperature and volume of the system. Save a copy of each plot
 using the <code>Export to postscript</code> option to submit along with the answers to the questions.
 Also use the <code>RMSD Trajectory Tool</code> under the <code>VMD Main &gt; Extensions &gt; Analysis</code> menu to look at the
