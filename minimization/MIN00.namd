@@ -1,0 +1,82 @@
+#############################################################
+## JOB DESCRIPTION                                         ##
+#############################################################
+
+# Minimization of gramicidin 
+# 
+
+#############################################################
+## ADJUSTABLE PARAMETERS                                   ##
+#############################################################
+
+structure      XXXXXXXX 
+coordinates    XXXXXXXX 
+outputName      min00
+
+set temperature 0
+temperature     $temperature
+
+constraints on
+consref ../model_files/gramicidin_res.pdb
+conskfile ../model_files/gramicidin_res.pdb
+conskcol  B
+constraintScaling 3.0
+
+firsttimestep		0
+
+#############################################################
+## SIMULATION PARAMETERS                                   ##
+#############################################################
+
+# Input
+paraTypeCharmm            on
+parameters              ../toppar/par_all27_prot_lipid_gram.inp
+parameters              ../toppar/par-extraterms.inp
+
+# NOTE: Do not set the initial velocity temperature if you 
+# have also specified a .vel restart file!
+ 
+
+# Periodic Boundary conditions
+# NOTE: Do not set the periodic cell basis if you have also 
+# specified an .xsc restart file!
+#
+cellBasisVector1 32.0 0.0 0.0
+cellBasisVector2 16.1 27.8 0.0
+cellBasisVector3 0.0 0.0 73.8
+cellOrigin           0.64 0.2 0.0
+
+wrapWater           on
+wrapAll             on
+wrapNearest	        on
+
+
+# Force-Field Parameters
+exclude             scaled1-4
+1-4scaling          1.0
+cutoff              10.0
+switching           on
+switchdist          8.0
+pairlistdist        11.0
+
+
+# Integrator Parameters
+timestep            1.0  ;# 2fs/step
+#rigidBonds	        all
+nonbondedFreq       1
+fullElectFrequency  2  
+stepspercycle       20
+
+
+#PME (for full-system periodic electrostatics)
+PME                 yes
+PMEGridSpacing     1.0
+
+restartfreq         100     ;# 500steps = every 1ps
+dcdfreq             100
+xstFreq             1
+outputEnergies      1
+outputPressure      1
+
+#protocol
+minimize 5000 

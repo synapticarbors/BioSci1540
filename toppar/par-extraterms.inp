@@ -1,0 +1,18 @@
+
+ !  Additional Gramicidin A parameters (Ferenc Molnar, 12/17/98)
+ !  based on values in parallh22x.pro
+
+ ANGLE
+ ! {parameters for formyl group}
+ O    C    HA        44.00  122.0000 ! taken from  O    CC   HA
+ NH1  C    HA        50.00  120.0000 ! guessed on basis of  NH1  CT3  HA
+
+DIHEDRAL
+ ! {parameters for formyl group}
+ HA   C    NH1  H           0.0     2    180.0000 ! taken from HA   CC   NH2  H
+
+!  {parameters for ethanolamine group}
+ HA   C    NH1  CT1         0.0     1       .0000 !  taken from  CT2  C NH1 CT1
+ HA   C    NH1  CT1         0.0     2    180.0000 !
+
+
