@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>analysis - BioSci 1540</title>
+  <meta name="author" content="Joshua L. Adelman">
+
+  
+  <meta name="description" content="Analysis Visualization of production run Ion Position Water String Dipole If you closely examine the string of water in the pore, you will notice &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://synapticarbors.github.com/BioSci1540/analysis">
+  <link href="/BioSci1540/favicon.png" rel="icon">
+  <link href="/BioSci1540/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/BioSci1540/javascripts/modernizr-2.0.js"></script>
+  <script src="/BioSci1540/javascripts/ender.js"></script>
+  <script src="/BioSci1540/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/BioSci1540/atom.xml" rel="alternate" title="BioSci 1540" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   class="no-sidebar"  >
+  <header role="banner"><hgroup>
+  <h1><a href="/BioSci1540/">BioSci 1540</a></h1>
+  
+    <h2>Introduction to Biomolecular Simulation</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/BioSci1540/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:synapticarbors.github.com/BioSci1540" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul class="main-navigation">
+  <li><a href="/BioSci1540/">Home</a></li>
+  <li><a href="/BioSci1540/resources">Resources</a></li>
+</ul>
+
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article role="article">
+  
+  <header>
+    <h1 class="entry-title">Analysis</h1>
+    
+  </header>
+  
+  <h2>Visualization of production run</h2>
+
+<h2>Ion Position</h2>
+
+<h2>Water String Dipole</h2>
+
+<p>If you closely examine the string of water in the pore, you will notice that the water molecules are not
+randomly oriented. Instead the oxygen of one water points toward the hydrogens of the next. This directs
+the negatively charged oxygen in one direction with the positively charged hydrogens in the other.</p>
+
+<blockquote><p>QUESTION 1: Predict what happens to the orientation of the water as postively charged ion like potassium moves through the pore. When the ion is at the center of the pore, will the water above and below it be oriented in different directions?</p></blockquote>
+
+
+<p>We can quantify this orientation by measuring the the <a href="http://en.wikipedia.org/wiki/Electric_dipole_moment">net dipole</a> of the string of waters.
+The following tcl script will calculate the z-component of the net dipole for each snapshot in your trajectory and write the results to a file:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="k">set</span> pwat <span class="k">[</span><span class="nv">atomselect</span> top <span class="s2">&quot;water and same resid as {water and within 4 of protein and z &gt; -8 and z &lt; 8}&quot;</span><span class="k">]</span>
+</span><span class='line'><span class="k">set</span> nframes <span class="k">[</span><span class="nv">molinfo</span> top get numframes<span class="k">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">set</span> fout <span class="k">[</span><span class="nb">open</span> dipole.dat w<span class="k">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="k">{set</span> k <span class="mi">0</span><span class="k">}</span> <span class="k">{</span><span class="nv">$k</span> <span class="o">&lt;</span> <span class="nv">$nframes</span><span class="k">}</span> <span class="k">{</span><span class="nb">incr</span> k<span class="k">}</span> <span class="k">{</span>
+</span><span class='line'><span class="nv">$pwat</span> <span class="nv">frame</span> <span class="nv">$k</span>
+</span><span class='line'><span class="nv">$pwat</span> <span class="k">update</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">set</span> dipole <span class="k">[</span><span class="nv">measure</span> dipole <span class="nv">$pwat</span> <span class="o">-</span>debye<span class="k">]</span>
+</span><span class='line'><span class="k">set</span> dz <span class="k">[</span><span class="nb">lindex</span> <span class="nv">$dipole</span> <span class="mi">2</span><span class="k">]</span>
+</span><span class='line'><span class="nb">puts</span> <span class="nv">$fout</span> <span class="nv">$dz</span>
+</span><span class='line'><span class="k">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">close</span> <span class="nv">$fout</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Plot the data by launching the application <code>Grace</code> which is located in the <code>Applications</code> folder.</p>
+
+<ul>
+<li>Open <code>dipole.dat</code> by selecting <code>Data &gt; Import &gt; ASCII..</code> and then selecting <code>dipole.dat</code> as the file. You may have to navigate to <code>$MDT/analysis</code> to locate it.</li>
+<li>Select the options:
+
+<ul>
+<li><code>Set type: XY</code></li>
+<li><code>Load as: Single Set</code></li>
+<li>Click <code>OK</code> to plot the data</li>
+</ul>
+</li>
+</ul>
+
+
+<blockquote><p>QUESTION 2: Does the net dipole change during the simulation? If so, does it change smoothly in time or does it make a sudden jump? Give a qualitative description of what you think is going on in this plot.</p></blockquote>
+
+
+<p>Save an <code>.jpeg</code> image of the plot and put it in your analysis directory. To save the image, in <code>Grace</code>, under the <code>File &gt; Print setup..</code> dropdown,
+select <code>Device: JPEG</code>, and set the path in the <code>File name</code> element. Hit <code>Apply</code> then <code>Accept</code> and then <code>Ctrl+P</code>. You should now see the <code>.jpeg</code> file
+in the directory you specified.</p>
+
+  
+</article>
+
+</div>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2011 - Joshua L. Adelman -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
