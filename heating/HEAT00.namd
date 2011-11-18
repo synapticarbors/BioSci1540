@@ -74,7 +74,7 @@ langevinHydrogen    no    ;# don't couple langevin bath to hydrogens
 # Constant Pressure Control (variable volume)
 useGroupPressure      yes ;# needed for 2fs steps
 useFlexibleCell       yes  ;# no for water box, yes for membrane
-useConstantRatio       yes  ;# no for water box, yes for membrane
+useConstantArea       yes  ;# no for water box, yes for membrane
 
 langevinPiston        off
 
