@@ -1,0 +1,98 @@
+#############################################################
+## JOB DESCRIPTION                                         ##
+#############################################################
+
+# Heating of gramicidin model 
+# 
+
+#############################################################
+## ADJUSTABLE PARAMETERS                                   ##
+#############################################################
+
+structure       ../model_files/gramicidin_final_model.psf
+coordinates     ../model_files/gramicidin_final_model.pdb
+outputName      heat00
+
+set temperature 1.0
+
+constraints on
+consref ../model_files/gramicidin_res.pdb
+conskfile ../model_files/gramicidin_res.pdb 
+conskcol  B
+constraintScaling 3.0
+
+# Continuing a job from the restart files
+set inputname      ../minimization/min00
+binCoordinates     $inputname.restart.coor
+binVelocities      $inputname.restart.vel  ;# remove the "temperature" entry if you use this!
+extendedSystem	   $inputname.restart.xsc
+
+firsttimestep		0
+
+#############################################################
+## SIMULATION PARAMETERS                                   ##
+#############################################################
+
+# Input
+paraTypeCharmm            on
+parameters              ../toppar/par_all27_prot_lipid_gram.inp
+parameters              ../toppar/par-extraterms.inp
+
+wrapWater           on
+wrapAll             on
+wrapNearest	        on
+
+
+# Force-Field Parameters
+exclude             scaled1-4
+1-4scaling          1.0
+cutoff              10.0
+switching           on
+switchdist          8.0
+pairlistdist        11.0
+
+
+# Integrator Parameters
+#timestep            1.0  ;# 2fs/step
+#rigidBonds	        all
+nonbondedFreq       1
+fullElectFrequency  2  
+stepspercycle       20
+
+
+#PME (for full-system periodic electrostatics)
+PME                 yes
+PMEGridSpacing     1.0
+
+# Constant Temperature Control
+langevin            on    ;# do langevin dynamics
+langevinDamping     1     ;# damping coefficient (gamma) of 1/ps
+langevinTemp        $temperature
+langevinHydrogen    no    ;# don't couple langevin bath to hydrogens
+
+
+# Constant Pressure Control (variable volume)
+useGroupPressure      yes ;# needed for 2fs steps
+useFlexibleCell       yes  ;# no for water box, yes for membrane
+useConstantRatio       yes  ;# no for water box, yes for membrane
+
+langevinPiston        off
+
+restartfreq         200
+dcdfreq             200
+xstFreq             200
+outputEnergies      200
+outputPressure      200
+
+
+#protocol
+timestep 1.0
+minimize 0
+
+for {set i 1} {$i <= 25} {incr i 1} {
+set temperature $i
+langevinPistonTemp  $temperature
+langevinTemp $temperature
+run 200
+} 
+
