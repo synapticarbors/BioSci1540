@@ -9,7 +9,8 @@
   <meta name="author" content="Joshua L. Adelman">
 
   
-  <meta name="description" content="Analysis Visualization of production run Ion Position Water String Dipole If you closely examine the string of water in the pore, you will notice &hellip;">
+  <meta name="description" content="Analysis You should now have a long trajectory in your $MDT/production directory called dyn00.dcd. In this session we will use VMD to
+analyze this &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -69,9 +70,34 @@
     
   </header>
   
-  <h2>Visualization of production run</h2>
+  <p>You should now have a long trajectory in your <code>$MDT/production</code> directory called <code>dyn00.dcd</code>. In this session we will use <code>VMD</code> to
+analyze this simulation.</p>
 
-<h2>Ion Position</h2>
+<h2>Visualization of production run</h2>
+
+<p>Start off by loading your original <code>.psf</code> and <code>.pdb</code>. The command below assumes that you are in your <code>$MDT/model_files</code> directory:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">mol</span> new gramicidin_model.psf
+</span><span class='line'><span class="nv">mol</span> addfile gramicidin_final_model.pdb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now change directories so that you are in <code>$MDT/production</code> and load the trajectory:</p>
+
+<figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='tcl'><span class='line'><span class="nv">mol</span> addfile dyn00.dcd waitfor all
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Take some time and using different representations and selections, play the trajectory (the controls to play the loaded trajectory
+are on the <code>VMD Main</code> window) and see what is going on with the water, the ions and protein. You can select the ions by using the <code>ion</code> keyword
+in the selection or using their resname (<code>resname POT</code> for potassium or <code>resname CLA</code> for chloride). It is often easiest to visualize the ions
+if you set the <code>Drawing Method</code> to <code>VDW</code> in the <code>Graphical Representations &gt; Draw Style</code> tab.</p>
+
+<blockquote><p>QUESTION 1: Write down a qualitative description of what you see, and if there are any interesting features of the simulation that you notice (max. 1 paragraph)</p></blockquote>
+
 
 <h2>Water String Dipole</h2>
 
@@ -79,10 +105,10 @@
 randomly oriented. Instead the oxygen of one water points toward the hydrogens of the next. This directs
 the negatively charged oxygen in one direction with the positively charged hydrogens in the other.</p>
 
-<blockquote><p>QUESTION 1: Predict what happens to the orientation of the water as postively charged ion like potassium moves through the pore. When the ion is at the center of the pore, will the water above and below it be oriented in different directions?</p></blockquote>
+<blockquote><p>QUESTION 2: Predict what happens to the orientation of the water as positively charged ion like potassium moves through the pore. When the ion is at the center of the pore, will the water above and below it be oriented in different directions?</p></blockquote>
 
 
-<p>We can quantify this orientation by measuring the the <a href="http://en.wikipedia.org/wiki/Electric_dipole_moment">net dipole</a> of the string of waters.
+<p>We can quantify this orientation by measuring the <a href="http://en.wikipedia.org/wiki/Electric_dipole_moment">net dipole</a> of the string of waters.
 The following tcl script will calculate the z-component of the net dipole for each snapshot in your trajectory and write the results to a file:</p>
 
 <figure class='code'><figcaption><span>Tk Console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -133,12 +159,46 @@ The following tcl script will calculate the z-component of the net dipole for ea
 </ul>
 
 
-<blockquote><p>QUESTION 2: Does the net dipole change during the simulation? If so, does it change smoothly in time or does it make a sudden jump? Give a qualitative description of what you think is going on in this plot.</p></blockquote>
+<blockquote><p>QUESTION 3: Does the net dipole change during the simulation? If so, does it change smoothly in time or does it make a sudden jump? Give a qualitative description of what you think is going on in this plot.</p></blockquote>
 
 
 <p>Save an <code>.jpeg</code> image of the plot and put it in your analysis directory. To save the image, in <code>Grace</code>, under the <code>File &gt; Print setup..</code> dropdown,
 select <code>Device: JPEG</code>, and set the path in the <code>File name</code> element. Hit <code>Apply</code> then <code>Accept</code> and then <code>Ctrl+P</code>. You should now see the <code>.jpeg</code> file
 in the directory you specified.</p>
+
+<h2>Ion Position</h2>
+
+<p>The previous section shows how you can write tcl code to loop over all of the frames in the trajectory to measure the dipole moment of the water string as
+a function of time.</p>
+
+<p>The basic steps involve:</p>
+
+<ul>
+<li>Opening a file to write data to: <code>set fout [open &lt;filename&gt; w]</code></li>
+<li>Making an atom selection involving the atoms you want to track: <code>set sel [atomselect top "SELECTION"]</code></li>
+<li>Getting the number of frames in the trajectory: <code>set nframes [molinfo top get numframes]</code></li>
+<li>Writing a loop to iterate over the frames, inside of which you:
+
+<ul>
+<li>Update the frame: <code>$sel frame $k</code></li>
+<li>Extract some data</li>
+<li>Write the data to file: <code>puts $fout $data</code></li>
+</ul>
+</li>
+<li>After finishing the loop, closing the file: <code>close $fout</code></li>
+</ul>
+
+
+<p>Write some tcl code using the above ingredients to get the z-position of the ion that was originally placed in the middle of the channel.
+You will have to define the atom selection (we did this in a previous section when we were moving the potassium into the channel), and then get its
+z-position, which can be done using something like: <code>set zpos [$sel get z]</code></p>
+
+<p>Write down the code you wrote in the same file where you have been recording the answers to earlier questions, and also plot the data using <code>Grace</code>
+as we did in the previous section.</p>
+
+<h2>Addendum</h2>
+
+<p>If you are interested in a more detailed and careful analysis of this system, I recommend reading <a href="http://www.pnas.org/content/101/1/117.full">Energetics of ion conduction through the gramicidin channel</a> by Allen, Andersen and Roux.</p>
 
   
 </article>
