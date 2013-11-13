@@ -9,7 +9,7 @@
 ## ADJUSTABLE PARAMETERS                                   ##
 #############################################################
 
-structure       ../model_files/gramicidin_final_model.psf
+structure       ../model_files/gramicidin_model.psf
 coordinates     ../model_files/gramicidin_final_model.pdb
 outputName      heat02
 
